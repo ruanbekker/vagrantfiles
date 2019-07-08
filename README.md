@@ -1,6 +1,10 @@
 # vagrantfiles
 Repository for Vagrantfiles
 
+## Samples:
+
+- [Vagrant and Ansible: Gitea](https://github.com/alvaroaleman/ansible-gitea/blob/master/Vagrantfile)
+
 ## Resources:
 
 - https://github.com/iJackUA/awesome-vagrant
