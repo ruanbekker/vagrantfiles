@@ -3,7 +3,7 @@
 sudo debconf-set-selections <<< 'mysql-server-5.7 mysql-server/root_password password rootpass'
 sudo debconf-set-selections <<< 'mysql-server-5.7 mysql-server/root_password_again password rootpass'
 sudo apt-get update
-sudo apt-get -y install mysql-server-5.7 php-mysql apache2 php
+sudo apt-get -y install mysql-server-5.7 php-mysql apache2 php openssl vim
 
 if [ ! -f /var/log/databasesetup ];
 then
