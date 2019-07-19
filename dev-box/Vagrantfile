@@ -1,0 +1,27 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "envimation/ubuntu-xenial"
+  config.vm.box_url = "https://atlas.hashicorp.com/envimation/boxes/ubuntu-xenial"
+  config.vm.hostname = "docker"
+  config.vm.network "forwarded_port", guest: 80, host: 8080
+  config.vm.provision "shell", inline: <<-SHELL
+    sudo apt update
+    sudo apt remove docker docker-engine -y
+    sudo apt install linux-image-extra-virtual -y
+    sudo apt install apt-transport-https ca-certificates curl software-properties-common -y
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+
+    sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+    sudo apt update
+    sudo apt install docker-ce openssl vim wget -y
+
+    sudo systemctl enable docker
+    sudo systemctl restart docker
+    sudo usermod -aG docker vagrant
+  SHELL
+  config.vm.provider "virtualbox" do |vb|
+    vb.memory = "1024"
+  end
+end
