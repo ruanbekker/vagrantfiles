@@ -4,41 +4,15 @@
 Vagrant.configure("2") do |config|
   config.vm.box = "envimation/ubuntu-xenial"
   config.vm.box_url = "https://atlas.hashicorp.com/envimation/boxes/ubuntu-xenial"
-  config.vm.hostname = "docker"
-  config.vm.network "forwarded_port", guest: 8080, host: 8084
+  config.vm.hostname = "k8s"
+  config.vm.synced_folder "k8s-manifests/elasticsearch", "/home/vagrant/elasticsearch"
+  config.vm.network "forwarded_port", guest: 8080, host: 8087
   config.vm.provision "shell", inline: <<-SHELL
-    sudo apt update
-    sudo apt remove docker docker-engine -y
-    sudo apt install linux-image-extra-virtual -y
-    sudo apt install apt-transport-https ca-certificates curl software-properties-common -y
-    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-
-    sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-    sudo apt update
-    sudo apt install docker-ce -y
-
-    sudo systemctl enable docker
-    sudo systemctl restart docker
-    sudo usermod -aG docker vagrant
-    sudo docker run hello-world
-
-    curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
-    chmod +x ./kubectl
-    sudo mv ./kubectl /usr/local/bin/kubectl
-
-    curl -s https://raw.githubusercontent.com/rancher/k3d/master/install.sh | sudo bash
-    k3d create --name "k3d-cluster" --publish "8087:8080" --workers 1
-    sleep 10
-    mkdir -p /home/vagrant/.config/k3d/k3d-cluster
-    sudo chown -R vagrant:vagrant /home/vagrant
-    echo 'export KUBECONFIG="$(k3d get-kubeconfig --name='k3d-cluster')"' > /tmp/.kubernetes.sh
-    echo '. /tmp/.kubernetes.sh' >> /home/vagrant/.bashrc
-    source /tmp/.kubernetes.sh
-
-    sleep 10
-    kubectl get nodes
-
+    echo "running scripts"
   SHELL
+  config.vm.provision :shell, :path => "bootstrap.sh"
+  config.vm.provision :shell, :path => "scripts/install_docker.sh"
+  config.vm.provision :shell, :path => "scripts/install_kubernetes.sh"
   config.vm.provider "virtualbox" do |vb|
     vb.memory = "2048"
   end
