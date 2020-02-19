@@ -1,0 +1,14 @@
+Vagrant.configure("2") do |config|
+  config.vm.box = "envimation/ubuntu-xenial"
+  config.vm.box_url = "https://atlas.hashicorp.com/envimation/boxes/ubuntu-xenial"
+  config.vm.provider "virtualbox" do |vb|
+    vb.memory = "1024"
+  end
+  config.vm.hostname = "python"
+  config.vm.synced_folder "data", "/home/vagrant/data"
+  config.vm.network "forwarded_port", guest: 80, host: 8080
+  config.vm.provision "shell", inline: <<-SHELL
+    echo "running scripts"
+  SHELL
+  config.vm.provision :shell, :path => "bootstrap.sh"
+end
