@@ -1,0 +1,30 @@
+# credit: https://github.com/cirocosta/local-aws-prom
+global:
+  scrape_interval: '5s'
+  evaluation_interval: '5s'
+
+scrape_configs:
+  - job_name: 'node'
+    relabel_configs:
+      - source_labels:
+        - '__meta_ec2_instance_id'
+        target_label: 'instance'
+      - source_labels:
+        - '__meta_ec2_tag_category'
+        target_label:  'category'
+    static_configs:
+      - targets:
+        - '192.168.0.6:9110'
+        labels:
+          __meta_ec2_tag_environment: 'test'
+          __meta_ec2_tag_category: 'monitoring'
+          __meta_ec2_instance_type: 't2.micro'
+          __meta_ec2_instance_id: 'i-aaaaaaaaaaaa'
+
+      - targets:
+        - '192.168.0.6:9120'
+        labels:
+          __meta_ec2_tag_environment: 'dev'
+          __meta_ec2_tag_category: 'monitoring'
+          __meta_ec2_instance_type: 't2.micro'
+          __meta_ec2_instance_id: 'i-bbbbbbbbbbbb'
