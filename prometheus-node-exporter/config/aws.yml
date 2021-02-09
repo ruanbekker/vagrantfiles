@@ -1,0 +1,20 @@
+# credit: https://github.com/cirocosta/local-aws-prom
+global:
+  scrape_interval: '10s'
+  evaluation_interval: '10s'
+
+scrape_configs:
+  - job_name: 'node'
+    ec2_sd_configs:
+      - port: 9100
+    relabel_configs:
+      - source_labels:
+        - '__meta_ec2_tag_environment'
+        regex: 'dev'
+        action: 'keep'
+      - source_labels:
+        - '__meta_ec2_instance_id'
+        target_label: 'instance'
+      - source_labels:
+        - '__meta_ec2_tag_category'
+        target_label:  'category'
