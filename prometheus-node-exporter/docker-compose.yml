@@ -1,0 +1,23 @@
+version: '3.7'
+
+services:
+  prometheus:
+    image: prom/prometheus
+    container_name: 'prometheus'
+    user: root
+    restart: unless-stopped
+    ports:
+      - 9090:9090
+    volumes:
+      - ./config/vagrant.yml:/etc/prometheus/prometheus.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention=14d'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.external-url=http://localhost:9090'
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
