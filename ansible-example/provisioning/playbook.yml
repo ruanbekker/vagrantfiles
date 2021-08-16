@@ -1,15 +1,10 @@
 ---
-- hosts: all
+- name: setup commons
+  hosts: all
   become: yes
-  tasks:
-    - name: ensure ntpd is at the latest version
-      apt:
-        pkg: ntp
-        state: "{{ desired_state }}"
-      notify:
-      - restart ntpd
-  handlers:
-    - name: restart ntpd
-      service:
-        name: ntp
-        state: restarted
+  pre_tasks:
+    - shell: echo starting
+  roles:
+    - { role: common, when: "ansible_os_family == 'Debian'" }
+  post_tasks:
+    - shell: echo ending
